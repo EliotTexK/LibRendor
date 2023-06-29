@@ -1,0 +1,36 @@
+{
+   <initscr>
+   Memcheck:Leak
+   ...
+   fun:initscr
+}
+{
+   <start_color_sp>
+   Memcheck:Leak
+   ...
+   fun:start_color_sp
+}
+{
+   <_nc_keypad>
+   Memcheck:Leak
+   ...
+   fun:_nc_keypad
+}
+{
+   <wgetch>
+   Memcheck:Leak
+   ...
+   fun:wgetch
+}
+{
+   <newwin_sp>
+   Memcheck:Leak
+   ...
+   fun:newwin_sp
+}
+{
+   <wrefresh>
+   Memcheck:Leak
+   ...
+   fun:wrefresh
+}
