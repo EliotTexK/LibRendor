@@ -4,7 +4,7 @@ void construct_test_enemy(game_object& base) {
     base.display_char = 'g';
     base.name = "the goblin";
 
-    stats* _stats = new stats(50, 50, 100, 100, 12, 1);
+    stamina* _stats = new stamina(100,1);
     add_component(base, *_stats);
 }
 
@@ -30,7 +30,7 @@ void init_map(game_object& player) {
     for (int i = 1; i < spawnpoints.size(); i++) {
         game_object * test_enemy = new game_object();
         construct_test_enemy(*test_enemy);
-        monsters.push_back(test_enemy);
+        monsters.insert(test_enemy);
         place_game_object(*test_enemy,spawnpoints[i][0],
             spawnpoints[i][1]);
     }
@@ -56,7 +56,7 @@ void move_game_object(game_object& go, int new_x, int new_y) {
 }
 
 void cleanup_map_data() {
-    for (game_object* m : monsters) {
-        delete m;
+    for (game_object* mon : monsters) {
+        delete mon;
     }
 }

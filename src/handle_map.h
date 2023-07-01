@@ -1,7 +1,7 @@
 #ifndef HANDLE_MAP_H
 #define HANDLE_MAP_H
 
-#include <string>
+#include <set>
 #include <stdexcept>
 #include "cave_gen.h"
 #include "utility.h"
@@ -11,8 +11,7 @@ using namespace std;
 
 inline char level_terrain[LEVEL_WIDTH][LEVEL_HEIGHT];
 inline game_object* objects_map[LEVEL_WIDTH][LEVEL_HEIGHT];
-
-inline vector<game_object*> monsters;
+inline set<game_object*> monsters;
 
 void init_map(game_object& player);
 

@@ -14,9 +14,8 @@ void fill_terrain_with_noise(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT],
 }
 
 void marching_squares(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT],
-    char wall_tile, int level_smoothing_iterations, char (&valid_neighbor_count)[9]) {
-    // use marching squares algorithm to smooth out the terrain to make a cave
-    for (int i = 0; i < level_smoothing_iterations; i++) {
+    char wall_tile, int iterations, char (&valid_neighbor_count)[9]) {
+    for (int i = 0; i < iterations; i++) {
         for (int x = 1; x < LEVEL_WIDTH - 1; x++) {
             for (int y = 1; y < LEVEL_HEIGHT - 1; y++) {
                 char wall_count = 0;

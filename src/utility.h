@@ -1,6 +1,10 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include <unordered_map>
+#include <array>
+#include <map>
+
 const int LEVEL_WIDTH = 100;
 const int LEVEL_HEIGHT = 30;
 
@@ -12,36 +16,32 @@ inline bool is_in_level_bounds(int x, int y) {
     return (x >= 0 && x < LEVEL_WIDTH && y >= 0 && y < LEVEL_HEIGHT);
 }
 
-enum comp_ids {
-    c_stats
-};
-
-enum action_ids {
-    a_move_direction,
-    a_start_running,
-    a_stop_running
-};
-
 enum directions {
-    d_up,
-    d_up_right,
-    d_right,
-    d_down_right,
-    d_down,
-    d_down_left,
-    d_left,
-    d_up_left
+    NW,
+    W,
+    SW,
+    N,
+    X,
+    S,
+    NE,
+    E,
+    SE
 };
 
-const char direction_components[8][2] = {
+const char direction_to_components[9][2] = {
+    {-1,-1},
+    {-1,0},
+    {-1,1},
     {0,-1},
+    {0,0},
+    {0,1},
     {1,-1},
     {1,0},
-    {1,1},
-    {0,1},
-    {-1,1},
-    {-1,0},
-    {-1,-1}
+    {1,1}
 };
+
+inline char components_to_direction(int x, int y) {
+    return (x+1) * 3 + (y+1);
+}
 
 #endif
