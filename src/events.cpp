@@ -1,73 +1,125 @@
 #include "events.h"
 
-bool check_if_can_move(int new_x, int new_y) {
-    return (is_in_level_bounds(new_x, new_y) &&
-        objects_map[new_x][new_y] == nullptr);
+void events::init::execute() {
+    components::stamina* stam =
+    obj.get_component<components::stamina>(comp_ids::c_stamina);
+
+    components::player* is_player =
+    obj.get_component<components::player>(comp_ids::c_player);
+    
+    components::enemy_AI* is_enemy =
+    obj.get_component<components::enemy_AI>(comp_ids::c_enemy_AI);
+
+    if (stam) timeline::insert_event(new events::restore_stamina(obj));
+    if (is_player || is_enemy) {
+        timeline::insert_event(new events::update(obj,0));
+    }
 }
 
-bool events::try_move_direction(game_object& obj, char direction) {
-    int effective_movespeed = 1;
-    stamina* _stamina = (stamina*) obj.components[comp_ids::c_stamina];
-    if (_stamina) {
-        effective_movespeed = _stamina->move_speed;
-        if (_stamina->is_sprinting) {
-            if (_stamina->cur_stamina > 0) {
-                _stamina->cur_stamina -= 4;
-                effective_movespeed *= 2;
-            } else {
-                _stamina->is_sprinting = false;
-                print_message(obj.name +
-                " stops sprinting because they're out of stamina");
-            }
+events::move::move(game_obj obj, int x, int y)
+    : obj(obj), x(x), y(y) {
+    components::stamina* stam =
+    obj.get_component<components::stamina>(comp_ids::c_stamina);
+    // by default, it takes objects BASE_MOVE_TIME time units to move
+    time = BASE_MOVE_TIME;
+    if (!stam) return;
+    time /= stam->move_speed;
+    if (stam->is_sprinting) {
+        if (stam->cur_stamina > 0) {
+            stam->cur_stamina -= 15;
+            time /= 2;
+        } else {
+            stam->is_sprinting = false;
+            print_message(obj.get_name() +
+                " stops sprinting because they ran out of stamina"
+            );
         }
     }
-    bool valid_move = true;
-    int new_x = obj.x;
-    int new_y = obj.y;
-    for (int i = 0; i < effective_movespeed; i++) {
-        new_x += direction_to_components[direction][0];
-        new_y += direction_to_components[direction][1];
-        if (!check_if_can_move(new_x, new_y)) {
-            valid_move = false;
-            break;
+}
+
+void events::move::execute() {
+    handle_map::move_game_obj(obj, x, y);
+}
+
+void events::begin_sprinting::execute() {
+    components::stamina* stam =
+    obj.get_component<components::stamina>(comp_ids::c_stamina);
+    if (!stam) return;
+    if (!stam->is_sprinting) {
+        if (stam->cur_stamina > stam->max_stamina/2) {
+            stam->is_sprinting = true;
+            print_message(obj.get_name() + " begins sprinting");
+        } else {
+            print_message(obj.get_name() + " is too tired to sprint!");
         }
     }
-    if (valid_move) {
-        move_game_object(
-            obj,
-            new_x,
-            new_y
-        );
-        return true;
+}
+
+void events::stop_sprinting::execute() {
+    components::stamina* stam =
+    obj.get_component<components::stamina>(comp_ids::c_stamina);
+    if (!stam) return;
+    if (stam->is_sprinting) {
+        stam->is_sprinting = false;
+        print_message(obj.get_name() + " stops sprinting");
+    }
+}
+
+void events::update::execute() {
+    if (obj.get_component<components::player>(c_player)) update_player();
+    else if (obj.get_component<components::player>(c_enemy_AI)) update_enemy_AI();
+}
+
+inline void events::update::update_player() {
+    event* chosen;
+    draw_level(obj.get_x(),obj.get_y(),'X');
+    bool valid = false;
+    while (!valid) {
+        valid = true;
+        int input = getch();
+        switch (input) {
+            case KEY_UP:
+                chosen = new events::move(obj,obj.get_x(),obj.get_y()-1);
+                break;
+            case KEY_DOWN:
+                chosen = new events::move(obj,obj.get_x(),obj.get_y()+1);
+                break;
+            case KEY_LEFT:
+                chosen = new events::move(obj,obj.get_x()-1,obj.get_y());
+                break;
+            case KEY_RIGHT:
+                chosen = new events::move(obj,obj.get_x()+1,obj.get_y());
+                break;
+            case 's':
+                chosen = new events::begin_sprinting(obj);
+                break;
+            case 'S':
+                chosen = new events::stop_sprinting(obj);
+                break;
+            case 'Q':
+                chosen = new event(); // NOP
+                timeline::quit_game = true;
+                break;
+            default:
+                valid = false;
+        }
+    }
+    timeline::insert_event(chosen);
+    timeline::insert_event(new update(obj,0,chosen));
+}
+
+inline void events::update::update_enemy_AI() {
+
+}
+
+void events::restore_stamina::execute() {
+    components::stamina* stam = 
+    obj.get_component<components::stamina>(comp_ids::c_stamina);
+    // recharge stamina until it reaches max
+    if (stam->cur_stamina + stam->recharge_speed > stam->max_stamina) {
+        stam->cur_stamina = stam->max_stamina;
     } else {
-        print_message(obj.name + " can't move that way");
-        return false;
+        stam->cur_stamina += stam->recharge_speed;
     }
-}
-
-bool events::follow_object(game_object& obj, game_object& target) {
-    int x_diff = target.x - obj.x;
-    int y_diff = target.y - obj.y;
-    int x_move = (x_diff == 0)? 0 : x_diff/abs(x_diff);
-    int y_move = (y_diff == 0)? 0 : y_diff/abs(y_diff);
-    int dir = components_to_direction(x_move,y_move);
-    return try_move_direction(obj,dir);
-}
-
-bool events::start_sprinting(game_object& obj) {
-    stamina* _stamina = (stamina*) obj.components[comp_ids::c_stamina];
-    if (_stamina) {
-        _stamina->is_sprinting = _stamina->cur_stamina > 0;
-    }
-    print_message(obj.name + " starts sprinting");
-    return false;
-}
-
-bool events::stop_sprinting(game_object& obj) {
-    stamina* _stamina = (stamina*) obj.components[comp_ids::c_stamina];
-    if (_stamina) {
-        _stamina->is_sprinting = false;
-    }
-    print_message(obj.name + " stops sprinting");
-    return false;
+    timeline::insert_event(new events::restore_stamina(obj));
 }

@@ -12,7 +12,7 @@ void init_UI() {
     scrollok(message_log, true);  // enables terminal-esque scrolling text
 }
 
-void print_message(string message) {
+void print_message(std::string message) {
     wprintw(message_log, message.c_str());
     wprintw(message_log,"\n");
     wrefresh(message_log);
@@ -24,10 +24,13 @@ void draw_level(int center_x, int center_y, char outside_tile) {
             int draw_x = center_x - VIEW_WIDTH/2 + x;
             int draw_y = center_y - VIEW_HEIGHT/2 + y;
             if (is_in_level_bounds(draw_x, draw_y)) {
-                if (objects_map[draw_x][draw_y]) {
-                    mvaddch(y,x,objects_map[draw_x][draw_y]->display_char);
-                } else if (level_terrain[draw_x][draw_y]) {
-                    mvaddch(y,x,level_terrain[draw_x][draw_y]);
+                // if everything is working, obj should point to a valid game_obj_data,
+                // or nullptr if it has been recently removed from the game
+                game_obj_rc* obj = handle_map::objs_map[draw_x][draw_y];
+                if (obj) {
+                    if (obj->data) {
+                        mvaddch(y,x,obj->data->display_char);
+                    }
                 } else {
                     mvaddch(y,x,' ');
                 }

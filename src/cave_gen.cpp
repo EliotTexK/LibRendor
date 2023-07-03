@@ -41,23 +41,23 @@ void marching_squares(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT],
 }
 
 // returns a list of room border cells
-queue<array<int,2>> fill_room_get_borders(char (&rooms_mask)[LEVEL_WIDTH][LEVEL_HEIGHT],
+std::queue<std::array<int,2>> fill_room_get_borders(char (&rooms_mask)[LEVEL_WIDTH][LEVEL_HEIGHT],
     char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT], int start_x, int start_y, int room_index) {
-    queue<array<int,2>> result = queue<array<int,2>>();
-    queue<array<int,2>> bfs = queue<array<int,2>>();
+    std::queue<std::array<int,2>> result = std::queue<std::array<int,2>>();
+    std::queue<std::array<int,2>> bfs = std::queue<std::array<int,2>>();
     bfs.push({start_x, start_y});
     while (!bfs.empty()) {
-        array<int,2> top = bfs.front();
+        std::array<int,2> top = bfs.front();
         bfs.pop();
         int x = top[0];
         int y = top[1];
-        array<array<int,2>,4> to_push = {{
+        std::array<std::array<int,2>,4> to_push = {{
             {x,y-1},
             {x,y+1},
             {x+1,y},
             {x-1,y}
         }};
-        for (array<int,2> i : to_push) {
+        for (std::array<int,2> i : to_push) {
             if (is_in_level_bounds(i[0],i[1]) && !rooms_mask[i[0]][i[1]]) {
                 if (!level_terrain[i[0]][i[1]]) {
                     bfs.push(i);
@@ -88,12 +88,12 @@ void connect_rooms(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT]) {
 
     // identify separate rooms and room borders
     int total_rooms = 1;
-    vector<queue<array<int,2>>> edges = vector<queue<array<int,2>>>();
-    edges.push_back(queue<array<int,2>>()); // 0th room has no edges
+    std::vector<std::queue<std::array<int,2>>> edges = std::vector<std::queue<std::array<int,2>>>();
+    edges.push_back(std::queue<std::array<int,2>>()); // 0th room has no edges
     for (int x = 0; x < LEVEL_WIDTH; x++) {
         for (int y = 0; y < LEVEL_HEIGHT; y++) {
             if (!level_terrain[x][y] && !rooms_mask[x][y]) {
-                queue<array<int,2>> room_edges = 
+                std::queue<std::array<int,2>> room_edges = 
                 fill_room_get_borders(rooms_mask, level_terrain, x, y, total_rooms);
                 edges.push_back(room_edges);
                 total_rooms += 1;
@@ -103,7 +103,7 @@ void connect_rooms(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT]) {
 
     // use bfs + backtracking to connect rooms
     int connected_count = 1;
-    vector<char> connected = vector<char>();
+    std::vector<char> connected = std::vector<char>();
     for (int i = 0; i < total_rooms; i++) {
         connected.push_back(0);
     }
@@ -111,22 +111,22 @@ void connect_rooms(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT]) {
     int seed_room = rand() % (total_rooms - 1) + 1;
     connected[seed_room] = true;
 
-    queue<array<int,2>> bfs = edges[seed_room];
+    std::queue<std::array<int,2>> bfs = edges[seed_room];
     while (connected_count < total_rooms - 1 && !bfs.empty()) {
-        array<int,2> top = bfs.front();
+        std::array<int,2> top = bfs.front();
         bfs.pop();
         int x = top[0];
         int y = top[1];
         if (!is_in_level_bounds(x,y)) continue;
         rooms_mask[x][y] = seed_room;
-        array<array<int,2>,4> to_push = {{
+        std::array<std::array<int,2>,4> to_push = {{
             {x,y-1},
             {x,y+1},
             {x+1,y},
             {x-1,y}
         }};
         for (int i = 0; i < 4; i++) {
-            array<int,2> neighbor = to_push[i];
+            std::array<int,2> neighbor = to_push[i];
             int& neighbor_x = neighbor[0];
             int& neighbor_y = neighbor[1];
             if (is_in_level_bounds(neighbor_x,neighbor_y)) {
@@ -139,7 +139,7 @@ void connect_rooms(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT]) {
                     if (!connected[neighbor_room]) {
                         connected_count++;
                         connected[neighbor_room] = true;
-                        queue<array<int,2>> new_edges = edges[neighbor_room];
+                        std::queue<std::array<int,2>> new_edges = edges[neighbor_room];
                         while (!new_edges.empty()) {
                             bfs.push(new_edges.front());
                             new_edges.pop();
@@ -179,8 +179,8 @@ void connect_rooms(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT]) {
     }
 }
 
-vector<array<int,2>> random_item_placement(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT], char density_percent) {
-    vector<array<int,2>> result;
+std::vector<std::array<int,2>> random_item_placement(char (&level_terrain)[LEVEL_WIDTH][LEVEL_HEIGHT], char density_percent) {
+    std::vector<std::array<int,2>> result;
     for (int x = 0; x < LEVEL_WIDTH; x++) {
         for (int y = 0; y < LEVEL_HEIGHT; y++) {
             if (!level_terrain[x][y]) {
@@ -190,6 +190,6 @@ vector<array<int,2>> random_item_placement(char (&level_terrain)[LEVEL_WIDTH][LE
             }
         }
     }
-    shuffle(result.begin(), result.end(), default_random_engine(rand()));
+    shuffle(result.begin(), result.end(), std::default_random_engine(rand()));
     return result;
 }
