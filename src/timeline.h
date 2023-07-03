@@ -10,9 +10,10 @@
 // a timeline (priority queue) to allow for turn interleaving.
 // ALWAYS ALLOCATE EVENTS ON THE HEAP!!!
 struct event {
-    long time = 0;
+    int time = 0;
+    long global_time = 0;
     event() {}
-    event(long time) : time(time) {}
+    event(int local_time) : time(local_time) {}
     // use the base class for events that don't do anything
     virtual void execute() {};
     virtual ~event() {};
@@ -20,7 +21,7 @@ struct event {
 
 struct compare_events {
     bool operator() (const event* ev1, const event* ev2) const {
-        return ev1->time > ev2->time;
+        return ev1->global_time > ev2->global_time;
     }
 };
 

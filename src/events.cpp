@@ -105,7 +105,7 @@ inline void events::update::update_player() {
         }
     }
     timeline::insert_event(chosen);
-    timeline::insert_event(new update(obj,0,chosen));
+    timeline::insert_event(new update(obj,chosen->time));
 }
 
 inline void events::update::update_enemy_AI() {

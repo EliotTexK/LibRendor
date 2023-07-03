@@ -41,18 +41,11 @@ struct stop_sprinting : public event {
     void execute();
 };
 
-// send an AI update to occur after "delay" time units
-// or, "delay" time units after a selected event
+// update AI, or it's the player's turn
 struct update : public event {
     game_obj obj;
-    update(game_obj obj, unsigned int delay,
-        event* after = nullptr) : obj(obj) {
-        if (after) {
-            time = after->time + delay;
-        } else {
-            time = delay;
-        }
-    }
+    update(game_obj obj, unsigned int time)
+        : event(time), obj(obj) {}
     // if an object has both player AI and enemy AI components,
     // only player AI will be processed
     void execute();

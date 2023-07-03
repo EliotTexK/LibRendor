@@ -34,3 +34,9 @@
    ...
    fun:wrefresh
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   ...
+   fun:wprintw
+}

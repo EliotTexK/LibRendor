@@ -12,7 +12,7 @@ int main() {
     game_obj player = game_obj('@', LEVEL_WIDTH/2, LEVEL_HEIGHT/2);
     player.add_component(new components::player());
     player.add_component(new components::combat(100,12));
-    player.add_component(new components::stamina(100, 5, 1));
+    player.add_component(new components::stamina(100, 1, 1));
     handle_map::init(player);
     init_UI();
 
