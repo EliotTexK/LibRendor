@@ -72,7 +72,7 @@ void events::update::execute() {
 
 inline void events::update::update_player() {
     event* chosen;
-    draw_level(obj.get_x(),obj.get_y(),'X');
+    draw_level(obj.get_x(),obj.get_y(),'#');
     bool valid = false;
     while (!valid) {
         valid = true;
@@ -105,7 +105,7 @@ inline void events::update::update_player() {
         }
     }
     timeline::insert_event(chosen);
-    timeline::insert_event(new update(obj,chosen->time));
+    timeline::insert_event(new update(obj,chosen->time+5));
 }
 
 inline void events::update::update_enemy_AI() {

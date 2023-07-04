@@ -1,3 +1,4 @@
 obj/*
 app
 valgrind.log
+seed.txt

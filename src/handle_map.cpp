@@ -5,8 +5,13 @@ inline game_obj_rc* handle_map::objs_map[LEVEL_WIDTH][LEVEL_HEIGHT];
 void handle_map::init(game_obj& player) {
     char level_mask[LEVEL_WIDTH][LEVEL_HEIGHT];
     fill_terrain_with_noise(level_mask,'1',40);
-    char rule_1[9] = {0,0,0,2,2,2,1,1,1};
+    char rule_1[9] = {0,0,2,2,2,1,1,1,1};
+    char rule_2[9] = {0,0,0,0,2,2,2,2,2};
+    char rule_3[9] = {0,0,0,0,2,2,2,1,1};
     marching_squares(level_mask,1,3,rule_1);
+    connect_rooms(level_mask);
+    marching_squares(level_mask,1,2,rule_2);
+    marching_squares(level_mask,1,2,rule_3);
     for (int x = 0; x < LEVEL_WIDTH; x++) {
         for (int y = 0; y < LEVEL_HEIGHT; y++) {
             if (level_mask[x][y]) objs_map[x][y] = new game_obj_rc('#');
@@ -17,12 +22,13 @@ void handle_map::init(game_obj& player) {
     player.set_x(spawnpoints[0][0]);
     player.set_y(spawnpoints[0][1]);
     place_game_obj(player);
-
+    /*
     for (int i = 1; i < spawnpoints.size(); i++) {
         game_obj test_enemy = game_obj('g',spawnpoints[i][0],spawnpoints[i][1]);
         test_enemy.set_name("goblin");
         place_game_obj(test_enemy);
     }
+    */
 }
 
 void handle_map::place_game_obj(game_obj& obj) {

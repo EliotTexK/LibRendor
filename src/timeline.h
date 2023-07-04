@@ -21,7 +21,7 @@ struct event {
 
 struct compare_events {
     bool operator() (const event* ev1, const event* ev2) const {
-        return ev1->global_time > ev2->global_time;
+        return ev1->global_time >= ev2->global_time;
     }
 };
 
