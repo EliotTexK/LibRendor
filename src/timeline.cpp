@@ -1,7 +1,7 @@
 #include "timeline.h"
 
 bool timeline::quit_game = false;
-int timeline::global_time = 0;
+unsigned long timeline::global_time = 0;
 std::priority_queue<event*,std::vector<event*>,compare_events> timeline::events;
 
 

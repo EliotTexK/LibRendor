@@ -2,9 +2,16 @@
 #define EVENTS_H
 
 #include "timeline.h"
+#include "utility.h"
 #include "handle_map.h"
-#include "handle_UI.h"
 #include <algorithm>
+#include <ncurses.h>
+#include <string>
+
+// forward declarations necessary for obvious reasons
+void draw_level(int center_x, int center_y, char outside_tile);
+void print_message(std::string message);
+struct handle_map;
 
 namespace events
 {

@@ -6,7 +6,8 @@
 #include "cave_gen.h"
 #include "utility.h"
 #include "game_obj.h"
-#include "events.h"
+
+struct timeline;
 
 // TIMELINE MUST BE INITIALIZED FIRST
 

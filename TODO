@@ -1,0 +1,5 @@
+- Implement recursive shadowcasting
+- Pathfinding: A*
+- SFML: load tilesets and display them
+- implement matrix template class that stores data as
+  a 1D array; get rid of constant level width and height

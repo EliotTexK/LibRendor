@@ -10,8 +10,8 @@
 // a timeline (priority queue) to allow for turn interleaving.
 // ALWAYS ALLOCATE EVENTS ON THE HEAP!!!
 struct event {
-    int time = 0;
-    long global_time = 0;
+    unsigned int time = 0;
+    unsigned long global_time = 0;
     event() {}
     event(int local_time) : time(local_time) {}
     // use the base class for events that don't do anything
@@ -30,10 +30,9 @@ struct compare_events {
 // When events are popped off the top, we add their time to global.
 struct timeline {
     static bool quit_game; // had to put it somewhere
-    static int global_time;
+    static unsigned long global_time;
     static std::priority_queue<event*,std::vector<event*>,compare_events> events;
     static void init();
-    // ties are broken based on order inserted
     static void insert_event(event* ev);
     static void execute_top();
     static void end();

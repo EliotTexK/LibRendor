@@ -1,17 +1,18 @@
 #ifndef HANDLE_UI_H
 #define HANDLE_UI_H
 
-#include "handle_map.h"
+#include "game_obj.h"
+#include <string>
 #include <ncurses.h>
 
-inline WINDOW* message_log;
+struct handle_map;
 
-void init_UI();
-
-void print_message(std::string message);
-
-void draw_level(int center_x, int center_y, char outside_tile);
-
-void end_UI();
+struct handle_UI {
+    static WINDOW* message_log;
+    static void init_UI();
+    static void print_message(std::string message);
+    static void draw_level(int center_x, int center_y, char outside_tile);
+    static void end_UI();
+};
 
 #endif

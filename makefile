@@ -1,7 +1,3 @@
-# Copied from StackOverflow (with modifications): this makefile will compile
-# all .cpp files in the src directory and dump all .o files to the obj directory.
-# Then, it links everything in the obj directory. It doesn't compile headers,
-# but maybe that's not an issue.
 SRC_DIR := src
 OBJ_DIR := obj
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)

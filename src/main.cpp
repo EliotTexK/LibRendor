@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     player.add_component(new components::combat(100,12));
     player.add_component(new components::stamina(100, 1, 1));
     handle_map::init(player);
-    init_UI();
+    handle_UI::init_UI();
 
     while (!timeline::quit_game) {
         timeline::execute_top();
@@ -40,5 +40,5 @@ int main(int argc, char *argv[]) {
 
     handle_map::rm_all_objs();
     timeline::end();
-    end_UI();
+    handle_UI::end_UI();
 }

@@ -1,4 +1,5 @@
 #include "events.h"
+#include "handle_UI.h"
 
 void events::init::execute() {
     components::stamina* stam =
@@ -30,7 +31,7 @@ events::move::move(game_obj obj, int x, int y)
             time /= 2;
         } else {
             stam->is_sprinting = false;
-            print_message(obj.get_name() +
+            handle_UI::print_message(obj.get_name() +
                 " stops sprinting because they ran out of stamina"
             );
         }
@@ -48,9 +49,9 @@ void events::begin_sprinting::execute() {
     if (!stam->is_sprinting) {
         if (stam->cur_stamina > stam->max_stamina/2) {
             stam->is_sprinting = true;
-            print_message(obj.get_name() + " begins sprinting");
+            handle_UI::print_message(obj.get_name() + " begins sprinting");
         } else {
-            print_message(obj.get_name() + " is too tired to sprint!");
+            handle_UI::print_message(obj.get_name() + " is too tired to sprint!");
         }
     }
 }
@@ -61,7 +62,7 @@ void events::stop_sprinting::execute() {
     if (!stam) return;
     if (stam->is_sprinting) {
         stam->is_sprinting = false;
-        print_message(obj.get_name() + " stops sprinting");
+        handle_UI::print_message(obj.get_name() + " stops sprinting");
     }
 }
 
@@ -72,7 +73,7 @@ void events::update::execute() {
 
 inline void events::update::update_player() {
     event* chosen;
-    draw_level(obj.get_x(),obj.get_y(),'#');
+    handle_UI::draw_level(obj.get_x(),obj.get_y(),'#');
     bool valid = false;
     while (!valid) {
         valid = true;

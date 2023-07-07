@@ -1,6 +1,9 @@
 #include "handle_UI.h"
+#include "handle_map.h"
 
-void init_UI() {
+WINDOW* handle_UI::message_log;
+
+void handle_UI::init_UI() {
     initscr();              // start ncurses
     start_color();          // start color mode
     curs_set(0);            // don't display the cursor
@@ -12,13 +15,13 @@ void init_UI() {
     scrollok(message_log, true);  // enables terminal-esque scrolling text
 }
 
-void print_message(std::string message) {
-    wprintw(message_log, message.c_str());
+void handle_UI::print_message(std::string message) {
+    wprintw(message_log, "%s", message.c_str());
     wprintw(message_log,"\n");
     wrefresh(message_log);
 }
 
-void draw_level(int center_x, int center_y, char outside_tile) {
+void handle_UI::draw_level(int center_x, int center_y, char outside_tile) {
     for (int x = 0; x < VIEW_WIDTH; x++) {
         for (int y = 0; y < VIEW_HEIGHT; y++) {
             int draw_x = center_x - VIEW_WIDTH/2 + x;
@@ -41,6 +44,9 @@ void draw_level(int center_x, int center_y, char outside_tile) {
     }
 }
 
-void end_UI() {
+void handle_UI::end_UI() {
+    curs_set(1);
+    echo();
+    nocbreak();
     endwin();
 }
