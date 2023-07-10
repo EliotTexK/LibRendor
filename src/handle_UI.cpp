@@ -1,7 +1,9 @@
 #include "handle_UI.h"
 #include "handle_map.h"
+#include "utility.h"
 
 WINDOW* handle_UI::message_log;
+char handle_UI::draw_buffer[VIEW_WIDTH][VIEW_HEIGHT];
 
 void handle_UI::init_UI() {
     initscr();              // start ncurses
@@ -32,14 +34,19 @@ void handle_UI::draw_level(int center_x, int center_y, char outside_tile) {
                 game_obj_rc* obj = handle_map::objs_map[draw_x][draw_y];
                 if (obj) {
                     if (obj->data) {
-                        mvaddch(y,x,obj->data->display_char);
+                        draw_buffer[x][y] = obj->data->display_char;
                     }
                 } else {
-                    mvaddch(y,x,' ');
+                    draw_buffer[x][y] = ' ';
                 }
             } else {
-                mvaddch(y,x,outside_tile);
+                draw_buffer[x][y] = outside_tile;
             }
+        }
+    }
+    for (int x = 0; x < VIEW_WIDTH; x++) {
+        for (int y = 0; y < VIEW_HEIGHT; y++) {
+            mvaddch(y,x,draw_buffer[x][y]);
         }
     }
 }
